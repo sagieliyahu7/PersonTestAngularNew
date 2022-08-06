@@ -1,0 +1,16 @@
+<h1>{{title}}</h1>
+<h2>{{result}}</h2>
+<form [formGroup]="personForm">
+  <label for="fullName">Full name:</label><br>
+  <input formControlName="fullName" type="text" id="fullName" name="fullName"><br>
+
+  <label for="idNum">Id num:</label><br>
+  <input formControlName="idNum" type="number" id="idNum" name="idNum"><br>
+
+  <label for="birthDate">Birth date:</label><br>
+  <input formControlName="birthDate" type="date" id="birthDate" name="birthDate" />
+  <!--#myDate [value]="demoUser.date | date:'yyyy-MM-dd'" (input)="demoUser.date=parseDate($event.target.value)"-->
+  <br>
+  <input type="button" (click)="add()" value="Add" />
+  <input type="reset">
+</form> 
