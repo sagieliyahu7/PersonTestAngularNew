@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Person } from '../models/person.interface';
 import { isValidIsraeliID } from '../utils/IsraeliIdValidation';
 
 @Component({
@@ -15,8 +16,14 @@ export class PersonComponent implements OnInit, OnDestroy {
     birthDate: new FormControl(null, [Validators.required]),
     idNum: new FormControl(null, [Validators.required, isValidIsraeliID])
   });
-  result = '';
   httpClient: HttpClient;
+  invalidFullName = false;
+  invalidIsraeliIdNum = false;
+  invalidBirthDate = false;
+  isSuccess = false;
+  isFailed = false;
+  failMessage = '';
+  people: Person[] | undefined;
   constructor(http: HttpClient) {
     this.httpClient = http;
   }
@@ -26,23 +33,52 @@ export class PersonComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
   }
-  add() {
+  addPerson() {
+    this.isSuccess = false;
+    this.isFailed = false;
+    this.invalidFullName = !this.personForm.get('fullName')?.valid;
+    this.invalidBirthDate = !this.personForm.get('birthDate')?.valid;
+    this.invalidIsraeliIdNum = !this.personForm.get('idNum')?.valid;
     if (!this.personForm.valid) {
-      this.result = 'יש למלא את השדות';
       return;
     }
-    this.httpClient.post<number>('https://localhost:7065/api/person/addPerson',
+
+    this.httpClient.post<any>('https://localhost:7065/api/person/addPerson',
       {
         FullName: this.personForm.get('fullName')?.value,
         BirthDate: this.personForm.get('birthDate')?.value,
         IdNum: this.personForm.get('idNum')?.value
-      }).subscribe(result => {
-      }, error => console.error(error));
+      }).subscribe(response => {
+        if (response.IsSuccess) {
+          this.isSuccess = true;
+        } else {
+          this.failMessage = 'The person by id already exists.';
+          this.isFailed = true;
+        }
+        this.isSuccess = response.IsSuccess;
+      }, error => {
+        this.failMessage = 'Some error occurred.';
+        this.isFailed = true;
+        console.error(error)
+      });
   }
-  //parseDate(dateString: string): Date {
-  //  if (dateString) {
-  //    return new Date(dateString);
-  //  }
-  //  return null;
-  //}
+  getAllPeople() {
+    this.isSuccess = false;
+    this.isFailed = false;
+
+    this.httpClient.post<any>('https://localhost:7065/api/person/getAllPeople',
+      {}).subscribe(response => {
+        if (response.IsSuccess) {
+          this.people = JSON.parse(response.Result);
+        } else {
+          this.failMessage = 'No people data.';
+          this.isFailed = true;
+        }
+      }, error => {
+        this.failMessage = 'Some error occurred.';
+        this.isFailed = true;
+        console.error(error)
+      });
+  }
+
 }

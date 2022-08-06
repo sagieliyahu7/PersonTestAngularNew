@@ -1,16 +1,45 @@
 <h1>{{title}}</h1>
-<h2>{{result}}</h2>
+<h2 *ngIf="isSuccess" style="color:green">The person has been successfully added.</h2>
+<h2 *ngIf="isFailed" style="color:red">{{failMessage}}</h2>
 <form [formGroup]="personForm">
   <label for="fullName">Full name:</label><br>
   <input formControlName="fullName" type="text" id="fullName" name="fullName"><br>
+  <label *ngIf="invalidFullName" style="color:red">please fill valid full name</label><br>
+
+  <label for="birthDate">Birth date:</label><br>
+  <input formControlName="birthDate" type="date" id="birthDate" name="birthDate" /><br>
+  <label *ngIf="invalidBirthDate" style="color:red">please fill valid birth date</label><br>
 
   <label for="idNum">Id num:</label><br>
   <input formControlName="idNum" type="number" id="idNum" name="idNum"><br>
+  <label *ngIf="invalidIsraeliIdNum" style="color:red">please fill valid israeli id num</label><br>
 
-  <label for="birthDate">Birth date:</label><br>
-  <input formControlName="birthDate" type="date" id="birthDate" name="birthDate" />
-  <!--#myDate [value]="demoUser.date | date:'yyyy-MM-dd'" (input)="demoUser.date=parseDate($event.target.value)"-->
   <br>
-  <input type="button" (click)="add()" value="Add" />
+  <input type="button" (click)="addPerson()" value="Add person" />
+  <input type="button" (click)="getAllPeople()" value="Get all people" />
   <input type="reset">
-</form> 
+</form>
+
+<div *ngIf="people" class="container mt-5">
+
+  <h2>People Display Data</h2>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Full name</th>
+        <th>Birth date</th>
+        <th>Identity</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let person of people; let i = index">
+        <td>{{i+1}}</td>
+        <td>{{person.FullName}}</td>
+        <td>{{person.BirthDate}}</td>
+        <td>{{person.IdNum}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
