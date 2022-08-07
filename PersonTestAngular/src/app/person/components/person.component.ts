@@ -49,7 +49,7 @@ export class PersonComponent implements OnInit, OnDestroy {
       {
         FullName: this.personForm.get('fullName')?.value,
         BirthDate: this.personForm.get('birthDate')?.value,
-        IdNum: this.personForm.get('idNum')?.value
+        IdNum: this.padLeftZeros(String(this.personForm.get('idNum')?.value), 9)
       }).subscribe(response => {
         if (response.IsSuccess) {
           this.successMessage = 'The person has been successfully added.'
@@ -101,4 +101,10 @@ export class PersonComponent implements OnInit, OnDestroy {
       });
   }
 
+  padLeftZeros(num: string, size: number) {
+    if (num) {
+      while (num.length < size) { num = "0" + num };
+    }
+    return num;
+  }
 }
