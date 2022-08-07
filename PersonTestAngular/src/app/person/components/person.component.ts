@@ -22,6 +22,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   invalidBirthDate = false;
   isSuccess = false;
   isFailed = false;
+  successMessage = '';
   failMessage = '';
   people: Person[] | undefined;
   constructor(http: HttpClient) {
@@ -34,6 +35,7 @@ export class PersonComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
   }
   addPerson() {
+    this.people = undefined;
     this.isSuccess = false;
     this.isFailed = false;
     this.invalidFullName = !this.personForm.get('fullName')?.valid;
@@ -50,6 +52,7 @@ export class PersonComponent implements OnInit, OnDestroy {
         IdNum: this.personForm.get('idNum')?.value
       }).subscribe(response => {
         if (response.IsSuccess) {
+          this.successMessage = 'The person has been successfully added.'
           this.isSuccess = true;
         } else {
           this.failMessage = 'The person by id already exists.';
@@ -63,6 +66,7 @@ export class PersonComponent implements OnInit, OnDestroy {
       });
   }
   getAllPeople() {
+    this.people = undefined;
     this.isSuccess = false;
     this.isFailed = false;
 
@@ -74,6 +78,22 @@ export class PersonComponent implements OnInit, OnDestroy {
           this.failMessage = 'No people data.';
           this.isFailed = true;
         }
+      }, error => {
+        this.failMessage = 'Some error occurred.';
+        this.isFailed = true;
+        console.error(error)
+      });
+  }
+
+  deleteData() {
+    this.people = undefined;
+    this.isSuccess = false;
+    this.isFailed = false;
+
+    this.httpClient.post<any>('https://localhost:7065/api/person/deleteData',
+      {}).subscribe(response => {
+        this.successMessage = 'The data has been successfully deleted.'
+        this.isSuccess = true;
       }, error => {
         this.failMessage = 'Some error occurred.';
         this.isFailed = true;

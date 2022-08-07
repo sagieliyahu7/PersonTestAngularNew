@@ -1,5 +1,5 @@
 <h1>{{title}}</h1>
-<h2 *ngIf="isSuccess" style="color:green">The person has been successfully added.</h2>
+<h2 *ngIf="isSuccess" style="color:green">{{successMessage}}</h2>
 <h2 *ngIf="isFailed" style="color:red">{{failMessage}}</h2>
 <form [formGroup]="personForm">
   <label for="fullName">Full name:</label><br>
@@ -17,7 +17,8 @@
   <br>
   <input type="button" (click)="addPerson()" value="Add person" />
   <input type="button" (click)="getAllPeople()" value="Get all people" />
-  <input type="reset">
+  <input type="button" (click)="deleteData()" value="Delete data" />
+  <input type="reset" value="Reset form data"/>
 </form>
 
 <div *ngIf="people" class="container mt-5">
@@ -37,7 +38,7 @@
       <tr *ngFor="let person of people; let i = index">
         <td>{{i+1}}</td>
         <td>{{person.FullName}}</td>
-        <td>{{person.BirthDate}}</td>
+        <td>{{person.BirthDate | date: 'dd/MM/yyyy'}}</td>
         <td>{{person.IdNum}}</td>
       </tr>
     </tbody>
